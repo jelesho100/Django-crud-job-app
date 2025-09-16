@@ -1,0 +1,31 @@
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.hero {
+    width: 100%;
+    max-width: 720px;
+    padding: 24px;
+    border: var(--borders);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: clamp(3.2rem, 3vw, 4.8rem);
+    margin: 0 0 10px 0;
+}
+
+.hero p {
+    font-size: var(--font-reg);
+    margin: 0 0 16px 0;
+}
+
+.hero .btn {
+    font-size: var(--font-l);
+}

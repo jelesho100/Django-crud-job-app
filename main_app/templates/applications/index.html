@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/applications/app-index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1>Application List</h1>
+</section>
+
+<section class="card-container">
+    {% for app in applications %}
+    <div class="card">
+        <div class="card-content">
+            <h2 class="card-title">{{ app.company }} — {{ app.position }}</h2>
+
+            {% if app.status == 'Applied' %}
+                <p>Status: Applied (submitted {{ app.applied_date }})</p>
+            {% elif app.status == 'Interview' %}
+                <p>Status: Interview in progress (applied {{ app.applied_date }})</p>
+            {% elif app.status == 'Offer' %}
+                <p>Status: Offer stage (applied {{ app.applied_date }})</p>
+            {% elif app.status == 'Rejected' %}
+                <p>Status: Rejected (applied {{ app.applied_date }})</p>
+            {% else %}
+                <p>Status: {{ app.status }} (applied {{ app.applied_date }})</p>
+            {% endif %}
+
+            <p><small>{{ app.description }}</small></p>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

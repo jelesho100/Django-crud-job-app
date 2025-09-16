@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Job Application Tracker</h1>
+    <p>Track companies, positions, and progress in one place.</p>
+    <a class="btn" href="/applications">View All Applications</a>
+</section>
+{% endblock %}
