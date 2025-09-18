@@ -1,5 +1,16 @@
-/* static/css/base.css */
-
-body {
-    background-color: red;  /* test that CSS is loading */
+#logout-form button {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
 }
+
+#logout-form button:hover {
+    color: var(--link-hover-color);
+}
+

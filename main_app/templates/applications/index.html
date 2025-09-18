@@ -13,24 +13,27 @@
 <section class="card-container">
     {% for app in applications %}
     <div class="card">
-        <div class="card-content">
-            <h2 class="card-title">{{ app.company }} — {{ app.position }}</h2>
+        <a href="{% url 'application-detail' app.id %}">
+            <div class="card-content">
+                <h2 class="card-title">{{ app.company }} — {{ app.position }}</h2>
 
-            {% if app.status == 'Applied' %}
-                <p>Status: Applied (submitted {{ app.applied_date }})</p>
-            {% elif app.status == 'Interview' %}
-                <p>Status: Interview in progress (applied {{ app.applied_date }})</p>
-            {% elif app.status == 'Offer' %}
-                <p>Status: Offer stage (applied {{ app.applied_date }})</p>
-            {% elif app.status == 'Rejected' %}
-                <p>Status: Rejected (applied {{ app.applied_date }})</p>
-            {% else %}
-                <p>Status: {{ app.status }} (applied {{ app.applied_date }})</p>
-            {% endif %}
+                {% if app.status == 'Applied' %}
+                    <p>Status: Applied ({{ app.applied_date }})</p>
+                {% elif app.status == 'Interview' %}
+                    <p>Status: Interview in progress ({{ app.applied_date }})</p>
+                {% elif app.status == 'Offer' %}
+                    <p>Status: Offer stage ({{ app.applied_date }})</p>
+                {% elif app.status == 'Rejected' %}
+                    <p>Status: Rejected ({{ app.applied_date }})</p>
+                {% else %}
+                    <p>Status: {{ app.status }} ({{ app.applied_date }})</p>
+                {% endif %}
 
-            <p><small>{{ app.description }}</small></p>
-        </div>
+                <p><small>{{ app.description }}</small></p>
+            </div>
+        </a>
     </div>
     {% endfor %}
 </section>
 {% endblock %}
+

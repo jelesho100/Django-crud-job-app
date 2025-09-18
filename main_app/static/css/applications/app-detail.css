@@ -1,0 +1,22 @@
+.app-container {
+    padding: 35px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: start;
+}
+
+.app-details h1 {
+    font-size: var(--font-xxl);
+    margin: 15px 0 6px;
+}
+
+.app-details h2 {
+    font-size: var(--font-xl);
+    margin: 0 0 10px;
+}
+
+.app-details p {
+    font-size: var(--font-reg);
+    margin: 5px 0;
+}
