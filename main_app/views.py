@@ -9,10 +9,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
 
 class Home(LoginView):
     template_name = 'home.html'
+    redirect_authenticated_user = True
 
 @login_required
 def about(request):
@@ -34,6 +36,11 @@ class ApplicationCreate(LoginRequiredMixin, CreateView):
     model = Application
     fields = ['company', 'position', 'description', 'status', 'applied_date']
     template_name = 'main_app/application_form.html'  
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, "Application created ✅")
+        return super().form_valid(form)
 
 
 class ApplicationUpdate(LoginRequiredMixin, UpdateView):

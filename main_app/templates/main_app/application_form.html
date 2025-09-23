@@ -1,24 +1,21 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/form.css' %}">
-{% endblock %}
-
 {% block content %}
+
 <div class="page-header">
-    {% if object %}
-        <h1>Edit {{ object.company }} — {{ object.position }}</h1>
-    {% else %}
-        <h1>Add an Application</h1>
-    {% endif %}
+    <h1 class="m0">{% if object %}Edit Application{% else %}New Application{% endif %}</h1>
 </div>
 
-<form action="" method="post" class="form-container">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <button type="submit" class="btn submit">Submit</button>
-</form>
+<div class="panel" style="padding: var(--space-4);">
+    <form method="post" class="form" autocomplete="off">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="mt3" style="display:flex; justify-content:flex-end; gap:.6rem;">
+            <a href="{% url 'application-index' %}" class="btn ghost">Cancel</a>
+            <button type="submit" class="btn primary">Save</button>
+        </div>
+    </form>
+</div>
+
 {% endblock %}
+

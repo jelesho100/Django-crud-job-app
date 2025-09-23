@@ -1,47 +1,98 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" type="image/png" href="" />
-    <title>Job Application App</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    {% block head %}{% endblock %}
-  </head>
-  <body>
-    <header>
-      <div class="header-logo-container">
-        <a href="/">
-          <img src="" alt="The Job Application App Logo" />
-        </a>
-      </div>
-      <nav>
-    <ul>
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'application-index' %}">My Applications</a></li>
-            <li><a href="{% url 'about' %}">About</a></li>
-            <li>
-                <form id="logout-form" method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Log out</button>
-                </form>
-            </li>
-        {% else %}
-            <li><a href="{% url 'about' %}">About</a></li>
-            <li><a href="{% url 'home' %}">Login</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-        {% endif %}
-    </ul>
-</nav>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <style>
+        .submit-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,.7);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .submit-overlay.active { display: flex; }
+        .spinner {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 3px solid #cbd5e1; border-top-color: #2563eb;
+            animation: spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn[disabled] { opacity: .6; cursor: not-allowed; }
+    </style>
 
+    <style>
+        .toast {
+            position: fixed; right: 16px; bottom: 16px;
+            background: #111; color: #fff; padding: .7rem .9rem;
+            border-radius: 8px; font-size: .95rem;
+            opacity: 0; transform: translateY(8px);
+            animation: toast-in .2s ease-out forwards, toast-out .2s ease-in 3.2s forwards;
+            z-index: 9999;
+        }
+        @keyframes toast-in { to { opacity: 1; transform: translateY(0); } }
+        @keyframes toast-out { to { opacity: 0; transform: translateY(8px); } }
+    </style>
 
-    </header>
-    <main>
-      {% block content %}{% endblock %}
-    </main>
-  </body>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <title>Job Tracker</title>
+</head>
+<body>
+
+{% if messages %}
+{% for message in messages %}
+    <div class="toast">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<header class="site-header">
+    <nav class="nav">
+        <div class="brand">
+            <span class="dot"></span> Job Tracker
+        </div>
+        <ul>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'application-index' %}">Applications</a></li>
+                <li><a href="{% url 'tag-index' %}">Tags</a></li>
+                <li><a href="{% url 'application-create' %}" class="btn small primary">+ New Application</a></li>
+                <li>
+                    <form id="logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="linklike">Log out</button>
+                    </form>
+                </li>
+            {% else %}
+                <li><a href="{% url 'about' %}">About</a></li>
+                <li><a href="{% url 'home' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<div id="submit-overlay" class="submit-overlay">
+    <div class="spinner"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('submit', function (e) {
+    const form = e.target;
+    if (form.method && form.method.toLowerCase() === 'post') {
+        const btn = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (btn) btn.setAttribute('disabled', 'disabled');
+        const overlay = document.getElementById('submit-overlay');
+        if (overlay) overlay.classList.add('active');
+    }
+    }, true);
+});
+</script>
+
+</body>
 </html>
+
+
+

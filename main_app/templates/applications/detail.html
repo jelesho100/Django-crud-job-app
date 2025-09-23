@@ -1,66 +1,117 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block head %}
-    <link rel="stylesheet" href="{% static 'css/applications/app-detail.css' %}">
-{% endblock %}
-
 {% block content %}
-<section class="app-container">
-    <div class="app-details">
-        <h1>{{ app.company }}</h1>
-        <h2>{{ app.position }}</h2>
-        {% if app.applied_date %}
-            <p><strong>Applied:</strong> {{ app.applied_date }}</p>
-        {% endif %}
-        <p><strong>Status:</strong> {{ app.status }}</p>
+
+<div class="page-header">
+    <div>
+        <h1 class="m0">{{ app.company }} — {{ app.position }}</h1>
+        <p class="mt1">Applied on {{ app.applied_date }}</p>
+    </div>
+    <div style="display:flex; gap:.6rem;">
+        <a class="btn warn" href="{% url 'application-update' app.pk %}">Edit</a>
+        <a class="btn danger" href="{% url 'application-delete' app.pk %}">Delete</a>
+    </div>
+</div>
+
+<div class="grid" style="grid-template-columns: 1.2fr .8fr;">
+    <section class="panel" style="padding: var(--space-4);">
+        <h2 class="m0" style="font-size:var(--font-l);">Overview</h2>
+        <div class="mt3 grid" style="grid-template-columns:1fr 1fr; gap: var(--space-3);">
+            <div class="card">
+                <div class="center-between">
+                    <span style="color:var(--muted);">Status</span>
+                    <span class="chip">{{ app.status }}</span>
+                </div>
+            </div>
+            <div class="card">
+                <div style="color:var(--muted);">Applied Date</div>
+                <div class="mt1" style="font-weight:600">{{ app.applied_date }}</div>
+            </div>
+        </div>
+
         {% if app.description %}
-            <p>{{ app.description }}</p>
+            <div class="card mt3">
+                <div style="color:var(--muted);">Notes</div>
+                <p class="mt1 m0">{{ app.description }}</p>
+            </div>
         {% endif %}
-    </div>
 
-    <div class="tags-section">
-        <div class="subsection-title">
-            <h2>Tags</h2>
+        <div class="card mt3">
+            <h3 class="m0" style="font-size:var(--font-l);">Interactions</h3>
+
+            {% if app.interaction_set.all %}
+                <table class="table mt3">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for interaction in app.interaction_set.all %}
+                            <tr>
+                                <td>{{ interaction.date }}</td>
+                                <td>{{ interaction.get_kind_display }}</td>
+                                <td>{{ interaction.notes }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty mt3">No interactions yet.</div>
+            {% endif %}
+
+            <form class="form mt3" method="post" action="{% url 'add-interaction' app.pk %}">
+                {% csrf_token %}
+                {{ interaction_form.as_p }}
+                <div style="display:flex; justify-content:flex-end;">
+                    <button class="btn primary" type="submit">Add Interaction</button>
+                </div>
+            </form>
         </div>
+    </section>
 
-        <h3>Current Tags</h3>
-        <div class="subsection-content">
-            {% if app.tags.count %}
+    <aside class="panel" style="padding: var(--space-4);">
+        <h2 class="m0" style="font-size:var(--font-l);">Tags</h2>
+
+        {% if app.tags.all %}
+            <div class="chips mt3">
                 {% for tag in app.tags.all %}
-                    <div class="tag-row">
-                        <div class="color-block" style="background-color: {{ tag.color }};"></div>
-                        <p>{{ tag.name }}</p>
-                        <form action="{% url 'remove-tag' app.id tag.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn danger">Remove</button>
-                        </form>
-                    </div>
+                    <span class="chip">
+                        <span class="dot" style="background: {{ tag.color }}"></span>
+                        {{ tag.name }}
+                        <a class="btn small ghost"
+                        href="{% url 'remove-tag' app.pk tag.pk %}">Remove</a>
+                    </span>
                 {% endfor %}
-            {% else %}
-                <p class="no-toys">No tags yet for this application.</p>
-            {% endif %}
-        </div>
+            </div>
+        {% else %}
+            <div class="empty mt3">No tags yet.</div>
+        {% endif %}
 
-        <h3>Available Tags</h3>
-        <div class="subsection-content">
-            {% if available_tags.count %}
+        <h3 class="mt4 mb2 m0" style="font-size:var(--font);">Add a Tag</h3>
+        {% if available_tags %}
+            <div class="grid mt2" style="grid-template-columns: 1fr; gap:.5rem;">
                 {% for tag in available_tags %}
-                    <div class="tag-row">
-                        <div class="color-block" style="background-color: {{ tag.color }};"></div>
-                        <p>{{ tag.name }}</p>
-                        <form action="{% url 'associate-tag' app.id tag.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn submit">Add Tag</button>
-                        </form>
+                    <div class="card" style="display:flex; align-items:center; justify-content:space-between;">
+                        <div style="display:flex; align-items:center; gap:.6rem;">
+                            <span class="dot" style="width:.8rem;height:.8rem;border-radius:999px;background:{{ tag.color }}"></span>
+                            <strong>{{ tag.name }}</strong>
+                        </div>
+                        <a class="btn small primary"
+                        href="{% url 'associate-tag' app.pk tag.pk %}">Add</a>
                     </div>
                 {% endfor %}
-            {% else %}
-                <p class="all-toys">This application already has all available tags 🥳</p>
-            {% endif %}
-        </div>
-    </div>
-</section>
+            </div>
+        {% else %}
+            <div class="empty mt2">No more tags available to add.</div>
+        {% endif %}
+    </aside>
+</div>
+
 {% endblock %}
+
+
+
 
 

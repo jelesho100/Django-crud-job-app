@@ -1,39 +1,44 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/applications/app-index.css' %}">
-{% endblock %}
-
 {% block content %}
-<section class="page-header">
-    <h1>Application List</h1>
-</section>
 
-<section class="card-container">
-    {% for app in applications %}
-    <div class="card">
-        <a href="{% url 'application-detail' app.id %}">
-            <div class="card-content">
-                <h2 class="card-title">{{ app.company }} — {{ app.position }}</h2>
-
-                {% if app.status == 'Applied' %}
-                    <p>Status: Applied ({{ app.applied_date }})</p>
-                {% elif app.status == 'Interview' %}
-                    <p>Status: Interview in progress ({{ app.applied_date }})</p>
-                {% elif app.status == 'Offer' %}
-                    <p>Status: Offer stage ({{ app.applied_date }})</p>
-                {% elif app.status == 'Rejected' %}
-                    <p>Status: Rejected ({{ app.applied_date }})</p>
-                {% else %}
-                    <p>Status: {{ app.status }} ({{ app.applied_date }})</p>
-                {% endif %}
-
-                <p><small>{{ app.description }}</small></p>
-            </div>
-        </a>
+<div class="page-header">
+    <div>
+        <h1 class="m0">Your Applications</h1>
+        <p class="mt1">Track every submission, interview, and outcome.</p>
     </div>
-    {% endfor %}
-</section>
+    <a href="{% url 'application-create' %}" class="btn primary">+ New Application</a>
+</div>
+
+{% if applications %}
+    <div class="grid cards">
+        {% for app in applications %}
+            <a class="card" href="{% url 'application-detail' app.pk %}" style="text-decoration:none;color:inherit;">
+                <div class="center-between">
+                    <h2 class="m0" style="font-size:var(--font-xl);">{{ app.company }}</h2>
+                    <span class="chip">{{ app.status }}</span>
+                </div>
+                <p class="mt2 mb2" style="color:var(--muted);">{{ app.position }}</p>
+                {% if app.tags.all %}
+                    <div class="chips mt2">
+                        {% for tag in app.tags.all %}
+                            <span class="chip">
+                                <span class="dot" style="background: {{ tag.color }}"></span>
+                                {{ tag.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <p class="mt3" style="color:var(--muted); font-size:var(--font-s);">
+                    Applied: {{ app.applied_date }}
+                </p>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty">No applications yet. Click “New Application” to get started.</div>
+{% endif %}
+
 {% endblock %}
+
+
 
